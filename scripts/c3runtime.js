@@ -2986,6 +2986,7 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 		{stickyHandLabel: 0},
 		{Sprite: 0},
 		{marsChunk: 0},
+		{DragInstructions: 0},
 		{STATE_dragmode: 0},
 		{STATE_addmode: 0},
 		{dropcount: 0},
