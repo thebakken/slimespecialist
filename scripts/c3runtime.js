@@ -2928,7 +2928,15 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 		C3.Behaviors.Tween.Cnds.OnTweensFinished,
 		C3.Plugins.Sprite.Acts.SetTowardPosition,
 		C3.Plugins.Touch.Exps.X,
-		C3.Plugins.Touch.Exps.Y
+		C3.Plugins.Touch.Exps.Y,
+		C3.Plugins.System.Cnds.ForEach,
+		C3.Plugins.Touch.Cnds.CompareTouchSpeed,
+		C3.Plugins.System.Cnds.TriggerOnce,
+		C3.Plugins.Sprite.Acts.SetAnimFrame,
+		C3.Plugins.System.Exps.random,
+		C3.Plugins.System.Acts.AddVar,
+		C3.Plugins.System.Cnds.EvaluateExpression,
+		C3.Plugins.System.Cnds.PickByComparison
 		];
 	};
 	self.C3_JsPropNameTable = [
@@ -2954,7 +2962,10 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 		{startX: 0},
 		{startY: 0},
 		{mp2Collider: 0},
+		{prevx: 0},
+		{prevy: 0},
 		{GakSlime: 0},
+		{number: 0},
 		{mp3Collider: 0},
 		{mp1Collider: 0},
 		{petriDish: 0},
@@ -2970,6 +2981,11 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 		{slimeGallery: 0},
 		{InstructionText: 0},
 		{takeOutButton: 0},
+		{petriDishFront: 0},
+		{gaklabel: 0},
+		{stickyHandLabel: 0},
+		{Sprite: 0},
+		{marsChunk: 0},
 		{STATE_dragmode: 0},
 		{STATE_addmode: 0},
 		{dropcount: 0},
@@ -2985,7 +3001,10 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 		{GakLeft: 0},
 		{GakRight: 0},
 		{GakBottom: 0},
-		{GakTop: 0}
+		{GakTop: 0},
+		{i: 0},
+		{denom: 0},
+		{dist: 0}
 	];
 }
 
@@ -3156,17 +3175,34 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 		() => 0.2,
 		() => "Animation 1",
 		() => "fall",
-		() => 0.7,
-		() => "melting",
+		() => 0.6,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() * 1.01);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() * (100 / 101));
+		},
 		() => "goToDish",
 		p => {
 			const n0 = p._GetNode(0);
-			return () => (n0.ExpObject() - 60);
+			return () => (n0.ExpObject() - 100);
 		},
 		() => 0.5,
 		() => "fallInDish",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 30);
+		},
 		() => 0.25,
 		() => "stickyHandInDish",
+		() => "goUp",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 50);
+		},
+		() => 0.3,
 		() => "returnToHome",
 		() => 4,
 		() => "x",
@@ -3197,12 +3233,43 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0();
 		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			const n2 = p._GetNode(2);
+			const n3 = p._GetNode(3);
+			const n4 = p._GetNode(4);
+			return () => (n0.ExpObject() + (C3.distanceTo(n1.ExpInstVar(), n2.ExpInstVar(), n3.ExpObject(), n4.ExpObject()) / 80));
+		},
 		() => 20,
-		() => 360,
+		() => "drophome",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpInstVar() - 10);
+		},
+		() => 0.7,
+		() => "melting",
+		() => "home",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 60);
+		},
 		() => "marsSlimeInDish",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 80);
+		},
+		() => 0.4,
+		() => 1200,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(0, 4);
+		},
+		() => 50,
+		() => 10,
 		() => 2,
-		() => "m",
 		() => "n",
+		() => "m",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			const v1 = p._GetNode(1).GetVar();
@@ -3225,9 +3292,43 @@ value){switch(index){case ENABLE:this.SetEnabled(value);break}}GetDebuggerProper
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0("n");
 		},
-		() => 60,
-		() => 336,
-		() => 1
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const v2 = p._GetNode(2).GetVar();
+			return () => ((f0("m") + f1("n")) + Math.floor(v2.GetValue()));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			return () => and(((n0.ExpInstVar()) > (0) ? 1 : 0), ((n1.ExpInstVar()) < (3) ? 1 : 0));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			const n2 = p._GetNode(2);
+			const n3 = p._GetNode(3);
+			return () => C3.distanceTo(n0.ExpInstVar(), n1.ExpInstVar(), n2.ExpObject(), n3.ExpObject());
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => ((n0.ExpInstVar()) === (3) ? 1 : 0);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() + 100);
+		},
+		() => 1,
+		() => "gakDish",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 40);
+		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			return () => (v0.GetValue() / v1.GetValue());
+		}
 	];
 }
 
